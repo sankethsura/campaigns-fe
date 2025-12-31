@@ -206,8 +206,12 @@ export default function RecipientsTable({
                       {recipient.email}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      <div className="max-w-xs truncate" title={recipient.message}>
+                      <div className="max-w-xs truncate group relative cursor-help">
                         {recipient.message}
+                        <div className="invisible group-hover:visible absolute z-50 w-64 p-2 mt-2 text-sm text-white bg-gray-900 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 left-0 top-full whitespace-normal break-words">
+                          {recipient.message}
+                          <div className="absolute -top-1 left-4 w-2 h-2 bg-gray-900 transform rotate-45"></div>
+                        </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
