@@ -10,6 +10,24 @@ import {
 } from '@/store/api';
 import RecipientsTable from '@/components/RecipientsTable';
 import Navbar from '@/components/Navbar';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
+import {
+  ArrowLeft,
+  Users,
+  Send,
+  AlertCircle,
+  Mail,
+  Plus,
+  X,
+  Calendar,
+  FileSpreadsheet,
+  Loader2,
+  UserPlus
+} from 'lucide-react';
 
 export default function CampaignDetailPage() {
   const params = useParams();
@@ -68,174 +86,243 @@ export default function CampaignDetailPage() {
 
   if (!user || campaignLoading || recipientsLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500"></div>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
       </div>
     );
   }
 
   if (!campaign) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
         <Navbar user={user} />
-        <div className="flex justify-center items-center h-[calc(100vh-64px)]">
-          <div className="text-red-600">Campaign not found</div>
+        <div className="flex flex-col justify-center items-center h-[calc(100vh-64px)] gap-4">
+          <AlertCircle className="h-16 w-16 text-destructive" />
+          <div className="text-2xl font-semibold text-destructive">Campaign not found</div>
+          <Button onClick={() => router.push('/campaigns')} variant="outline" className="gap-2">
+            <ArrowLeft className="h-4 w-4" />
+            Back to Campaigns
+          </Button>
         </div>
       </div>
     );
   }
 
-  const getStatusColor = (status: string) => {
-    const colors = {
-      draft: 'bg-gray-100 text-gray-800',
-      scheduled: 'bg-blue-100 text-blue-800',
-      in_progress: 'bg-yellow-100 text-yellow-800',
-      completed: 'bg-green-100 text-green-800',
-      paused: 'bg-red-100 text-red-800',
+  const getStatusVariant = (status: string): "default" | "secondary" | "destructive" | "outline" | "success" | "warning" | "info" => {
+    const variants = {
+      draft: 'secondary' as const,
+      scheduled: 'info' as const,
+      in_progress: 'warning' as const,
+      completed: 'success' as const,
+      paused: 'destructive' as const,
     };
-    return colors[status as keyof typeof colors] || colors.draft;
+    return variants[status as keyof typeof variants] || 'secondary';
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       <Navbar user={user} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
-          <button
+          <Button
             onClick={() => router.push('/campaigns')}
-            className="text-blue-600 hover:text-blue-800 mb-4 inline-flex items-center"
+            variant="ghost"
+            className="mb-4 gap-2 hover:text-primary"
           >
-            <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
+            <ArrowLeft className="h-4 w-4" />
             Back to Campaigns
-          </button>
+          </Button>
 
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex justify-between items-start">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">{campaign.name}</h1>
-                {campaign.description && (
-                  <p className="mt-2 text-gray-600">{campaign.description}</p>
+          <Card className="border-2 shadow-xl">
+            <CardHeader>
+              <div className="flex justify-between items-start gap-4">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <Mail className="h-6 w-6 text-primary" />
+                    <CardTitle className="text-3xl bg-gradient-to-r from-primary to-orange-600 bg-clip-text text-transparent">
+                      {campaign.name}
+                    </CardTitle>
+                  </div>
+                  {campaign.description && (
+                    <CardDescription className="text-base mt-2">
+                      {campaign.description}
+                    </CardDescription>
+                  )}
+                </div>
+                <Badge variant={getStatusVariant(campaign.status)} className="text-sm px-3 py-1">
+                  {campaign.status.replace('_', ' ').toUpperCase()}
+                </Badge>
+              </div>
+            </CardHeader>
+
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Card className="border-2 bg-accent/50">
+                  <CardContent className="pt-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground mb-1">Total Recipients</p>
+                        <p className="text-3xl font-bold">{campaign.totalRecipients}</p>
+                      </div>
+                      <Users className="h-10 w-10 text-primary opacity-20" />
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="border-2 bg-green-500/10 border-green-500/20">
+                  <CardContent className="pt-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground mb-1">Sent</p>
+                        <p className="text-3xl font-bold text-green-600">{campaign.sentCount}</p>
+                      </div>
+                      <Send className="h-10 w-10 text-green-600 opacity-20" />
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="border-2 bg-destructive/10 border-destructive/20">
+                  <CardContent className="pt-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground mb-1">Failed</p>
+                        <p className="text-3xl font-bold text-destructive">{campaign.failedCount}</p>
+                      </div>
+                      <AlertCircle className="h-10 w-10 text-destructive opacity-20" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Card className="border-2 shadow-xl mb-6">
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <FileSpreadsheet className="h-5 w-5 text-primary" />
+                <CardTitle>Import Recipients from Excel</CardTitle>
+              </div>
+              <Badge variant="warning">Coming Soon</Badge>
+            </div>
+            <CardDescription className="mt-2">
+              Bulk import recipients from Excel files with columns:{' '}
+              <code className="px-1.5 py-0.5 bg-accent rounded text-xs font-mono">email</code>,{' '}
+              <code className="px-1.5 py-0.5 bg-accent rounded text-xs font-mono">triggerDate</code>{' '}
+              (YYYY-MM-DD HH:MM),{' '}
+              <code className="px-1.5 py-0.5 bg-accent rounded text-xs font-mono">message</code>
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="border-2 border-dashed rounded-lg p-12 text-center bg-accent/30">
+              <FileSpreadsheet className="mx-auto h-16 w-16 text-muted-foreground mb-4 opacity-50" />
+              <p className="font-medium text-muted-foreground mb-1">Excel Import Feature</p>
+              <p className="text-sm text-muted-foreground/70">This feature will be available soon</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-2 shadow-xl mb-6">
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <Users className="h-5 w-5 text-primary" />
+                <CardTitle>
+                  Recipients ({recipientsData?.pagination.totalRecipients || 0})
+                </CardTitle>
+              </div>
+              <Button
+                onClick={() => setShowAddForm(!showAddForm)}
+                variant={showAddForm ? "outline" : "default"}
+                className="gap-2"
+              >
+                {showAddForm ? (
+                  <>
+                    <X className="h-4 w-4" />
+                    Cancel
+                  </>
+                ) : (
+                  <>
+                    <UserPlus className="h-4 w-4" />
+                    Add Recipient
+                  </>
                 )}
-              </div>
-              <span className={`px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(campaign.status)}`}>
-                {campaign.status.toUpperCase()}
-              </span>
+              </Button>
             </div>
-
-            <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="text-sm text-gray-500">Total Recipients</div>
-                <div className="text-2xl font-bold text-gray-900">{campaign.totalRecipients}</div>
-              </div>
-              <div className="bg-green-50 p-4 rounded-lg">
-                <div className="text-sm text-gray-500">Sent</div>
-                <div className="text-2xl font-bold text-green-600">{campaign.sentCount}</div>
-              </div>
-              <div className="bg-red-50 p-4 rounded-lg">
-                <div className="text-sm text-gray-500">Failed</div>
-                <div className="text-2xl font-bold text-red-600">{campaign.failedCount}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold text-gray-900">Import Recipients from Excel</h2>
-            <span className="px-3 py-1 text-sm font-semibold bg-yellow-100 text-yellow-800 rounded-full">
-              Coming Soon
-            </span>
-          </div>
-          <p className="text-sm text-gray-600 mb-4">
-            Bulk import recipients from Excel files with columns: <strong>email</strong>, <strong>triggerDate</strong> (YYYY-MM-DD HH:MM), <strong>message</strong>
-          </p>
-          <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-            <svg
-              className="mx-auto h-12 w-12 text-gray-400 mb-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 48 48"
-              aria-hidden="true"
-            >
-              <path
-                d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            <p className="text-gray-500 font-medium">Excel Import Feature</p>
-            <p className="text-sm text-gray-400 mt-1">This feature will be available soon</p>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold text-gray-900">
-              Recipients ({recipientsData?.pagination.totalRecipients || 0})
-            </h2>
-            <button
-              onClick={() => setShowAddForm(!showAddForm)}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-            >
-              {showAddForm ? 'Cancel' : 'Add Recipient Manually'}
-            </button>
-          </div>
+          </CardHeader>
 
           {showAddForm && (
-            <form onSubmit={handleAddRecipient} className="mb-6 p-4 bg-gray-50 rounded-lg">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                  <input
-                    type="email"
-                    value={newRecipient.email}
-                    onChange={(e) => setNewRecipient({ ...newRecipient, email: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                    placeholder="recipient@example.com"
+            <CardContent className="border-t bg-accent/30">
+              <form onSubmit={handleAddRecipient} className="space-y-4 pt-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium leading-none">
+                      Email <span className="text-destructive">*</span>
+                    </label>
+                    <Input
+                      type="email"
+                      value={newRecipient.email}
+                      onChange={(e) => setNewRecipient({ ...newRecipient, email: e.target.value })}
+                      placeholder="recipient@example.com"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium leading-none">
+                      Trigger Date & Time <span className="text-destructive">*</span>
+                    </label>
+                    <Input
+                      type="datetime-local"
+                      value={newRecipient.triggerDate}
+                      onChange={(e) => setNewRecipient({ ...newRecipient, triggerDate: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium leading-none">
+                    Message <span className="text-destructive">*</span>
+                  </label>
+                  <Textarea
+                    value={newRecipient.message}
+                    onChange={(e) => setNewRecipient({ ...newRecipient, message: e.target.value })}
+                    rows={4}
+                    placeholder="Email message content..."
+                    required
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Trigger Date & Time</label>
-                  <input
-                    type="datetime-local"
-                    value={newRecipient.triggerDate}
-                    onChange={(e) => setNewRecipient({ ...newRecipient, triggerDate: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                  />
-                </div>
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
-                <textarea
-                  value={newRecipient.message}
-                  onChange={(e) => setNewRecipient({ ...newRecipient, message: e.target.value })}
-                  rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                  placeholder="Email message content..."
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={isAdding}
-                className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition disabled:opacity-50"
-              >
-                {isAdding ? 'Adding...' : 'Add Recipient'}
-              </button>
-            </form>
+                <Button
+                  type="submit"
+                  disabled={isAdding}
+                  className="gap-2"
+                  variant="default"
+                >
+                  {isAdding ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Adding...
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="h-4 w-4" />
+                      Add Recipient
+                    </>
+                  )}
+                </Button>
+              </form>
+            </CardContent>
           )}
 
-          <RecipientsTable
-            campaignId={campaignId}
-            recipients={recipientsData?.recipients || []}
-            pagination={recipientsData?.pagination}
-            currentPage={currentPage}
-            onPageChange={setCurrentPage}
-          />
-        </div>
+          <CardContent className={showAddForm ? "pt-6 border-t" : ""}>
+            <RecipientsTable
+              campaignId={campaignId}
+              recipients={recipientsData?.recipients || []}
+              pagination={recipientsData?.pagination}
+              currentPage={currentPage}
+              onPageChange={setCurrentPage}
+            />
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

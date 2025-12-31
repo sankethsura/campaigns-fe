@@ -3,6 +3,25 @@
 import { useState } from 'react';
 import { EmailRecipient, PaginationMetadata } from '@/types/campaign';
 import { useUpdateRecipientMutation, useDeleteRecipientMutation, useTriggerEmailNowMutation } from '@/store/api';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Textarea } from './ui/textarea';
+import { Badge } from './ui/badge';
+import {
+  Edit,
+  Trash2,
+  Save,
+  X,
+  Send,
+  RotateCcw,
+  ChevronLeft,
+  ChevronRight,
+  Mail,
+  Clock,
+  CheckCircle2,
+  AlertTriangle,
+  Loader2
+} from 'lucide-react';
 
 interface RecipientsTableProps {
   campaignId: string;
@@ -91,18 +110,27 @@ export default function RecipientsTable({
   };
 
   const getStatusBadge = (status: EmailRecipient['status']) => {
-    const styles = {
-      pending: 'bg-yellow-100 text-yellow-800',
-      scheduled: 'bg-blue-100 text-blue-800',
-      processing: 'bg-purple-100 text-purple-800',
-      sent: 'bg-green-100 text-green-800',
-      failed: 'bg-red-100 text-red-800',
+    const variantMap: Record<EmailRecipient['status'], "default" | "secondary" | "destructive" | "outline" | "success" | "warning" | "info"> = {
+      pending: 'warning',
+      scheduled: 'info',
+      processing: 'secondary',
+      sent: 'success',
+      failed: 'destructive',
+    };
+
+    const iconMap: Record<EmailRecipient['status'], React.ReactNode> = {
+      pending: <Clock className="h-3 w-3" />,
+      scheduled: <Clock className="h-3 w-3" />,
+      processing: <Loader2 className="h-3 w-3 animate-spin" />,
+      sent: <CheckCircle2 className="h-3 w-3" />,
+      failed: <AlertTriangle className="h-3 w-3" />,
     };
 
     return (
-      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${styles[status]}`}>
+      <Badge variant={variantMap[status]} className="gap-1">
+        {iconMap[status]}
         {status.toUpperCase()}
-      </span>
+      </Badge>
     );
   };
 
@@ -122,154 +150,187 @@ export default function RecipientsTable({
 
   if (recipients.length === 0) {
     return (
-      <div className="text-center py-12 bg-gray-50 rounded-lg">
-        <p className="text-gray-500">No recipients added yet</p>
+      <div className="text-center py-16 bg-accent/30 rounded-lg border-2 border-dashed">
+        <Mail className="h-12 w-12 text-muted-foreground mx-auto mb-3 opacity-50" />
+        <p className="text-muted-foreground font-medium">No recipients added yet</p>
+        <p className="text-sm text-muted-foreground/70 mt-1">Add recipients to start your campaign</p>
       </div>
     );
   }
 
   return (
     <div>
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      <div className="overflow-x-auto rounded-lg border">
+        <table className="min-w-full divide-y divide-border">
+          <thead className="bg-accent/50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 Email
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 Message
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 Trigger Date
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 Status
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-background divide-y divide-border">
             {recipients.map((recipient) => (
-              <tr key={recipient._id} className="hover:bg-gray-50">
+              <tr key={recipient._id} className="hover:bg-accent/30 transition-colors">
                 {editingId === recipient._id ? (
                   <>
                     <td className="px-6 py-4">
-                      <input
+                      <Input
                         type="email"
                         value={editForm.email || ''}
                         onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
-                        className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                        className="min-w-[200px]"
                       />
                     </td>
                     <td className="px-6 py-4">
-                      <textarea
+                      <Textarea
                         value={editForm.message || ''}
                         onChange={(e) => setEditForm({ ...editForm, message: e.target.value })}
                         rows={2}
-                        className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                        className="min-w-[250px]"
                       />
                     </td>
                     <td className="px-6 py-4">
-                      <input
+                      <Input
                         type="datetime-local"
                         value={editForm.triggerDate || ''}
                         onChange={(e) => setEditForm({ ...editForm, triggerDate: e.target.value })}
-                        className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                        className="min-w-[200px]"
                       />
                     </td>
                     <td className="px-6 py-4">
                       {getStatusBadge(recipient.status)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap space-x-2">
-                      <button
-                        onClick={() => handleSave(recipient._id)}
-                        disabled={isUpdating}
-                        className="text-green-600 hover:text-green-900 font-medium disabled:opacity-50"
-                      >
-                        Save
-                      </button>
-                      <button
-                        onClick={handleCancel}
-                        disabled={isUpdating}
-                        className="text-gray-600 hover:text-gray-900 font-medium disabled:opacity-50"
-                      >
-                        Cancel
-                      </button>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={() => handleSave(recipient._id)}
+                          disabled={isUpdating}
+                          size="sm"
+                          variant="default"
+                          className="gap-1"
+                        >
+                          <Save className="h-3 w-3" />
+                          Save
+                        </Button>
+                        <Button
+                          onClick={handleCancel}
+                          disabled={isUpdating}
+                          size="sm"
+                          variant="outline"
+                          className="gap-1"
+                        >
+                          <X className="h-3 w-3" />
+                          Cancel
+                        </Button>
+                      </div>
                     </td>
                   </>
                 ) : (
                   <>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {recipient.email}
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <div className="flex items-center gap-2">
+                        <Mail className="h-4 w-4 text-muted-foreground" />
+                        {recipient.email}
+                      </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
+                    <td className="px-6 py-4 text-sm">
                       <div className="max-w-xs truncate group relative cursor-help">
                         {recipient.message}
-                        <div className="invisible group-hover:visible absolute z-50 w-64 p-2 mt-2 text-sm text-white bg-gray-900 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 left-0 top-full whitespace-normal break-words">
+                        <div className="invisible group-hover:visible absolute z-50 w-80 p-3 mt-2 text-sm bg-popover text-popover-foreground border rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 left-0 top-full whitespace-normal break-words">
                           {recipient.message}
-                          <div className="absolute -top-1 left-4 w-2 h-2 bg-gray-900 transform rotate-45"></div>
+                          <div className="absolute -top-1 left-4 w-2 h-2 bg-popover border-l border-t transform rotate-45"></div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {formatDate(recipient.triggerDate)}
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4" />
+                        {formatDate(recipient.triggerDate)}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {getStatusBadge(recipient.status)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap space-x-2">
-                      {recipient.status === 'pending' && (
-                        <>
-                          {isExpired(recipient.triggerDate) && (
-                            <span className="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-800 mr-2">
-                              Expired
-                            </span>
-                          )}
-                          <button
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex gap-2">
+                        {recipient.status === 'pending' && (
+                          <>
+                            {isExpired(recipient.triggerDate) && (
+                              <Badge variant="warning" className="gap-1 mr-2">
+                                <AlertTriangle className="h-3 w-3" />
+                                Expired
+                              </Badge>
+                            )}
+                            <Button
+                              onClick={() => handleTriggerNow(recipient._id)}
+                              disabled={isTriggering}
+                              size="sm"
+                              variant="default"
+                              className="gap-1"
+                            >
+                              <Send className="h-3 w-3" />
+                              Trigger
+                            </Button>
+                            <Button
+                              onClick={() => handleEdit(recipient)}
+                              size="sm"
+                              variant="outline"
+                              className="gap-1"
+                            >
+                              <Edit className="h-3 w-3" />
+                              Edit
+                            </Button>
+                            <Button
+                              onClick={() => handleDelete(recipient._id)}
+                              disabled={isDeleting}
+                              size="sm"
+                              variant="ghost"
+                              className="gap-1 text-destructive hover:text-destructive hover:bg-destructive/10"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                              Delete
+                            </Button>
+                          </>
+                        )}
+                        {recipient.status === 'failed' && (
+                          <Button
                             onClick={() => handleTriggerNow(recipient._id)}
                             disabled={isTriggering}
-                            className="text-green-600 hover:text-green-900 font-medium disabled:opacity-50"
+                            size="sm"
+                            variant="warning"
+                            className="gap-1"
+                            title={recipient.error || 'Failed to send email'}
                           >
-                            Trigger Now
-                          </button>
-                          <button
-                            onClick={() => handleEdit(recipient)}
-                            className="text-blue-600 hover:text-blue-900 font-medium"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleDelete(recipient._id)}
-                            disabled={isDeleting}
-                            className="text-red-600 hover:text-red-900 font-medium disabled:opacity-50"
-                          >
-                            Delete
-                          </button>
-                        </>
-                      )}
-                      {recipient.status === 'failed' && (
-                        <button
-                          onClick={() => handleTriggerNow(recipient._id)}
-                          disabled={isTriggering}
-                          className="text-orange-600 hover:text-orange-900 font-medium disabled:opacity-50"
-                          title={recipient.error || 'Failed to send email'}
-                        >
-                          Retry
-                        </button>
-                      )}
-                      {recipient.status === 'sent' && (
-                        <span className="text-xs text-gray-500">
-                          Sent {recipient.sentAt && formatDate(recipient.sentAt)}
-                        </span>
-                      )}
-                      {recipient.status === 'processing' && (
-                        <span className="text-xs text-purple-600">
-                          Sending...
-                        </span>
-                      )}
+                            <RotateCcw className="h-3 w-3" />
+                            Retry
+                          </Button>
+                        )}
+                        {recipient.status === 'sent' && (
+                          <span className="text-xs text-muted-foreground flex items-center gap-1">
+                            <CheckCircle2 className="h-3 w-3 text-green-600" />
+                            Sent {recipient.sentAt && formatDate(recipient.sentAt)}
+                          </span>
+                        )}
+                        {recipient.status === 'processing' && (
+                          <span className="text-xs flex items-center gap-1">
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                            Sending...
+                          </span>
+                        )}
+                      </div>
                     </td>
                   </>
                 )}
@@ -281,76 +342,80 @@ export default function RecipientsTable({
 
       {/* Pagination Controls */}
       {pagination && pagination.totalPages > 1 && (
-        <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 mt-4">
+        <div className="flex items-center justify-between border-t bg-accent/30 px-4 py-4 sm:px-6 mt-4 rounded-b-lg">
           <div className="flex flex-1 justify-between sm:hidden">
-            <button
+            <Button
               onClick={() => onPageChange(currentPage - 1)}
               disabled={!pagination.hasPreviousPage}
-              className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              variant="outline"
+              size="sm"
+              className="gap-1"
             >
+              <ChevronLeft className="h-4 w-4" />
               Previous
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => onPageChange(currentPage + 1)}
               disabled={!pagination.hasNextPage}
-              className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              variant="outline"
+              size="sm"
+              className="gap-1"
             >
               Next
-            </button>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
           </div>
           <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
             <div>
-              <p className="text-sm text-gray-700">
+              <p className="text-sm text-muted-foreground">
                 Showing{' '}
-                <span className="font-medium">
+                <span className="font-semibold text-foreground">
                   {(currentPage - 1) * pagination.limit + 1}
                 </span>{' '}
                 to{' '}
-                <span className="font-medium">
+                <span className="font-semibold text-foreground">
                   {Math.min(currentPage * pagination.limit, pagination.totalRecipients)}
                 </span>{' '}
                 of{' '}
-                <span className="font-medium">{pagination.totalRecipients}</span> results
+                <span className="font-semibold text-foreground">{pagination.totalRecipients}</span> results
               </p>
             </div>
             <div>
-              <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-                <button
+              <nav className="isolate inline-flex gap-1" aria-label="Pagination">
+                <Button
                   onClick={() => onPageChange(currentPage - 1)}
                   disabled={!pagination.hasPreviousPage}
-                  className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                  variant="outline"
+                  size="sm"
+                  className="gap-1"
                 >
-                  <span className="sr-only">Previous</span>
-                  <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
-                  </svg>
-                </button>
+                  <ChevronLeft className="h-4 w-4" />
+                  Previous
+                </Button>
 
                 {/* Page Numbers */}
                 {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((page) => (
-                  <button
+                  <Button
                     key={page}
                     onClick={() => onPageChange(page)}
-                    className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${
-                      page === currentPage
-                        ? 'z-10 bg-blue-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600'
-                        : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0'
-                    }`}
+                    variant={page === currentPage ? "default" : "outline"}
+                    size="sm"
+                    className="min-w-[40px]"
                   >
                     {page}
-                  </button>
+                  </Button>
                 ))}
 
-                <button
+                <Button
                   onClick={() => onPageChange(currentPage + 1)}
                   disabled={!pagination.hasNextPage}
-                  className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                  variant="outline"
+                  size="sm"
+                  className="gap-1"
                 >
-                  <span className="sr-only">Next</span>
-                  <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
-                  </svg>
-                </button>
+                  Next
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
               </nav>
             </div>
           </div>

@@ -1,5 +1,7 @@
 'use client';
 
+import { Button } from './ui/button';
+
 export default function GoogleLoginButton() {
   const handleGoogleLogin = () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
@@ -7,9 +9,11 @@ export default function GoogleLoginButton() {
   };
 
   return (
-    <button
+    <Button
       onClick={handleGoogleLogin}
-      className="flex items-center justify-center gap-3 w-full bg-white text-gray-700 border border-gray-300 rounded-lg px-6 py-3 text-base font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 shadow-sm"
+      variant="outline"
+      size="lg"
+      className="w-full gap-3 text-base"
     >
       <svg className="w-5 h-5" viewBox="0 0 24 24">
         <path
@@ -30,6 +34,6 @@ export default function GoogleLoginButton() {
         />
       </svg>
       Sign in with Google
-    </button>
+    </Button>
   );
 }

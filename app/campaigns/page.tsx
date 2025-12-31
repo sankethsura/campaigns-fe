@@ -4,6 +4,12 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useGetCampaignsQuery, useCreateCampaignMutation, useDeleteCampaignMutation, useGetUserProfileQuery } from '@/store/api';
 import Navbar from '@/components/Navbar';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
+import { Plus, X, Mail, Trash2, Eye, Calendar, Users, Send, AlertCircle, Loader2 } from 'lucide-react';
 
 export default function CampaignsPage() {
   const router = useRouter();
@@ -57,15 +63,15 @@ export default function CampaignsPage() {
     }
   };
 
-  const getStatusColor = (status: string) => {
-    const colors = {
-      draft: 'bg-gray-100 text-gray-800',
-      scheduled: 'bg-blue-100 text-blue-800',
-      in_progress: 'bg-yellow-100 text-yellow-800',
-      completed: 'bg-green-100 text-green-800',
-      paused: 'bg-red-100 text-red-800',
+  const getStatusVariant = (status: string): "default" | "secondary" | "destructive" | "outline" | "success" | "warning" | "info" => {
+    const variants = {
+      draft: 'secondary' as const,
+      scheduled: 'info' as const,
+      in_progress: 'warning' as const,
+      completed: 'success' as const,
+      paused: 'destructive' as const,
     };
-    return colors[status as keyof typeof colors] || colors.draft;
+    return variants[status as keyof typeof variants] || 'secondary';
   };
 
   const formatDate = (dateString: string) => {
@@ -78,164 +84,212 @@ export default function CampaignsPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500"></div>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       <Navbar user={user} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Email Campaigns</h1>
-          <button
+          <div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-orange-600 bg-clip-text text-transparent mb-2">
+              Email Campaigns
+            </h1>
+            <p className="text-muted-foreground">Manage and track your email campaigns</p>
+          </div>
+          <Button
             onClick={() => setShowCreateForm(!showCreateForm)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            size="lg"
+            className="gap-2"
           >
-            {showCreateForm ? 'Cancel' : 'Create Campaign'}
-          </button>
+            {showCreateForm ? (
+              <>
+                <X className="h-5 w-5" />
+                Cancel
+              </>
+            ) : (
+              <>
+                <Plus className="h-5 w-5" />
+                Create Campaign
+              </>
+            )}
+          </Button>
         </div>
 
         {showCreateForm && (
-          <div className="bg-white rounded-lg shadow p-6 mb-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Create New Campaign</h2>
-            <form onSubmit={handleCreateCampaign}>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Campaign Name *
-                </label>
-                <input
-                  type="text"
-                  value={newCampaign.name}
-                  onChange={(e) => setNewCampaign({ ...newCampaign, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                  placeholder="e.g., Summer Newsletter 2025"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Description (optional)
-                </label>
-                <textarea
-                  value={newCampaign.description}
-                  onChange={(e) => setNewCampaign({ ...newCampaign, description: e.target.value })}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                  placeholder="Brief description of this campaign..."
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={isCreating}
-                className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition disabled:opacity-50"
-              >
-                {isCreating ? 'Creating...' : 'Create Campaign'}
-              </button>
-            </form>
-          </div>
+          <Card className="mb-8 border-2 shadow-xl">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Mail className="h-5 w-5 text-primary" />
+                Create New Campaign
+              </CardTitle>
+              <CardDescription>
+                Start a new email campaign to reach your audience
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleCreateCampaign} className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Campaign Name <span className="text-destructive">*</span>
+                  </label>
+                  <Input
+                    type="text"
+                    value={newCampaign.name}
+                    onChange={(e) => setNewCampaign({ ...newCampaign, name: e.target.value })}
+                    placeholder="e.g., Summer Newsletter 2025"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Description <span className="text-muted-foreground text-xs">(optional)</span>
+                  </label>
+                  <Textarea
+                    value={newCampaign.description}
+                    onChange={(e) => setNewCampaign({ ...newCampaign, description: e.target.value })}
+                    rows={3}
+                    placeholder="Brief description of this campaign..."
+                  />
+                </div>
+                <Button
+                  type="submit"
+                  disabled={isCreating}
+                  className="gap-2"
+                >
+                  {isCreating ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Creating...
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="h-4 w-4" />
+                      Create Campaign
+                    </>
+                  )}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
         )}
 
         {isLoading ? (
-          <div className="text-center py-12">
-            <div className="text-gray-600">Loading campaigns...</div>
+          <div className="flex flex-col items-center justify-center py-16">
+            <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
+            <p className="text-muted-foreground">Loading campaigns...</p>
           </div>
         ) : campaigns.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-12 text-center">
-            <svg
-              className="mx-auto h-12 w-12 text-gray-400 mb-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-              />
-            </svg>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No campaigns yet</h3>
-            <p className="text-gray-500 mb-4">
-              Get started by creating your first email campaign
-            </p>
-            <button
-              onClick={() => setShowCreateForm(true)}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-            >
-              Create Your First Campaign
-            </button>
-          </div>
+          <Card className="border-2 border-dashed shadow-xl">
+            <CardContent className="flex flex-col items-center justify-center py-16">
+              <div className="rounded-full bg-primary/10 p-4 mb-4">
+                <Mail className="h-12 w-12 text-primary" />
+              </div>
+              <CardTitle className="mb-2">No campaigns yet</CardTitle>
+              <CardDescription className="mb-6 text-center max-w-md">
+                Get started by creating your first email campaign to engage with your audience
+              </CardDescription>
+              <Button
+                onClick={() => setShowCreateForm(true)}
+                size="lg"
+                className="gap-2"
+              >
+                <Plus className="h-5 w-5" />
+                Create Your First Campaign
+              </Button>
+            </CardContent>
+          </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {campaigns.map((campaign) => (
-              <div
+              <Card
                 key={campaign._id}
-                className="bg-white rounded-lg shadow hover:shadow-lg transition cursor-pointer"
+                className="border-2 hover:shadow-2xl hover:border-primary/50 transition-all duration-300 cursor-pointer group"
+                onClick={() => router.push(`/campaigns/${campaign._id}`)}
               >
-                <div
-                  onClick={() => router.push(`/campaigns/${campaign._id}`)}
-                  className="p-6"
-                >
-                  <div className="flex justify-between items-start mb-4">
-                    <h3 className="text-lg font-semibold text-gray-900 line-clamp-1">
-                      {campaign.name}
-                    </h3>
-                    <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(campaign.status)}`}>
-                      {campaign.status}
-                    </span>
+                <CardHeader>
+                  <div className="flex justify-between items-start gap-2">
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                      <Mail className="h-5 w-5 text-primary flex-shrink-0" />
+                      <CardTitle className="line-clamp-1 group-hover:text-primary transition-colors">
+                        {campaign.name}
+                      </CardTitle>
+                    </div>
+                    <Badge variant={getStatusVariant(campaign.status)}>
+                      {campaign.status.replace('_', ' ')}
+                    </Badge>
                   </div>
-
                   {campaign.description && (
-                    <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                    <CardDescription className="line-clamp-2 mt-2">
                       {campaign.description}
-                    </p>
+                    </CardDescription>
                   )}
+                </CardHeader>
 
-                  <div className="space-y-2 mb-4">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">Total Recipients:</span>
-                      <span className="font-medium text-gray-900">{campaign.totalRecipients}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">Sent:</span>
-                      <span className="font-medium text-green-600">{campaign.sentCount}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">Failed:</span>
-                      <span className="font-medium text-red-600">{campaign.failedCount}</span>
-                    </div>
+                <CardContent className="space-y-3">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2 text-muted-foreground">
+                      <Users className="h-4 w-4" />
+                      Total Recipients
+                    </span>
+                    <span className="font-semibold">{campaign.totalRecipients}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2 text-muted-foreground">
+                      <Send className="h-4 w-4" />
+                      Sent
+                    </span>
+                    <span className="font-semibold text-green-600">{campaign.sentCount}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2 text-muted-foreground">
+                      <AlertCircle className="h-4 w-4" />
+                      Failed
+                    </span>
+                    <span className="font-semibold text-destructive">{campaign.failedCount}</span>
                   </div>
 
-                  <div className="text-xs text-gray-500">
-                    Created: {formatDate(campaign.createdAt)}
+                  <div className="pt-2 border-t">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <Calendar className="h-3 w-3" />
+                      Created: {formatDate(campaign.createdAt)}
+                    </div>
                   </div>
-                </div>
+                </CardContent>
 
-                <div className="px-6 py-3 bg-gray-50 border-t border-gray-200 flex justify-between">
-                  <button
+                <CardFooter className="bg-accent/50 flex justify-between gap-2">
+                  <Button
                     onClick={(e) => {
                       e.stopPropagation();
                       router.push(`/campaigns/${campaign._id}`);
                     }}
-                    className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+                    variant="ghost"
+                    size="sm"
+                    className="gap-2 flex-1"
                   >
+                    <Eye className="h-4 w-4" />
                     View Details
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={(e) => {
                       e.stopPropagation();
                       handleDeleteCampaign(campaign._id, campaign.name);
                     }}
                     disabled={isDeleting}
-                    className="text-sm text-red-600 hover:text-red-800 font-medium disabled:opacity-50"
+                    variant="ghost"
+                    size="sm"
+                    className="gap-2 text-destructive hover:text-destructive hover:bg-destructive/10"
                   >
+                    <Trash2 className="h-4 w-4" />
                     Delete
-                  </button>
-                </div>
-              </div>
+                  </Button>
+                </CardFooter>
+              </Card>
             ))}
           </div>
         )}

@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ReduxProvider from "@/store/ReduxProvider";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
-  title: "Email Sender Platform",
-  description: "Send beautiful email campaigns with ease",
+  title: "Campaign Manager Pro",
+  description: "Sophisticated email campaign management platform",
 };
 
 export default function RootLayout({
@@ -13,9 +14,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>
-        <ReduxProvider>{children}</ReduxProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className="min-h-screen font-sans antialiased">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <ReduxProvider>{children}</ReduxProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

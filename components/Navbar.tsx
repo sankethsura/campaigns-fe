@@ -1,9 +1,13 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { removeAuthToken } from '@/lib/auth';
 import { useLogoutMutation } from '@/store/api';
 import { User } from '@/types/user';
+import { ThemeToggle } from './theme-toggle';
+import { Button } from './ui/button';
+import { LogOut, Mail } from 'lucide-react';
 
 interface NavbarProps {
   user: User;
@@ -25,31 +29,40 @@ export default function Navbar({ user }: NavbarProps) {
   };
 
   return (
-    <nav className="bg-white shadow-sm border-b border-gray-200">
+    <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <div className="flex items-center">
-            <h1 className="text-xl font-bold text-gray-900">Email Sender</h1>
-          </div>
+          <Link
+            href="/campaigns"
+            className="flex items-center space-x-2 text-xl font-bold bg-gradient-to-r from-primary to-orange-600 bg-clip-text text-transparent hover:opacity-80 transition"
+          >
+            <Mail className="h-6 w-6 text-primary" />
+            <span>Campaign Manager Pro</span>
+          </Link>
 
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center space-x-4">
+            <ThemeToggle />
+
+            <div className="flex items-center space-x-3 px-4 py-2 rounded-lg bg-accent/50">
               {user.picture && (
                 <img
                   src={user.picture}
                   alt={user.name}
-                  className="w-8 h-8 rounded-full"
+                  className="h-8 w-8 rounded-full ring-2 ring-primary/20"
                 />
               )}
-              <span className="text-sm font-medium text-gray-700">{user.name}</span>
+              <span className="text-sm font-medium">{user.name}</span>
             </div>
 
-            <button
+            <Button
               onClick={handleLogout}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+              variant="destructive"
+              size="sm"
+              className="gap-2"
             >
+              <LogOut className="h-4 w-4" />
               Logout
-            </button>
+            </Button>
           </div>
         </div>
       </div>
