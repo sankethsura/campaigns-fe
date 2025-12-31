@@ -49,6 +49,8 @@ export default function DashboardPage() {
     day: 'numeric'
   });
 
+  console.log(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000',"env-backend")
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar user={user} />
