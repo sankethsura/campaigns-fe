@@ -41,15 +41,11 @@ export const api = createApi({
     getCampaigns: builder.query<Campaign[], void>({
       query: () => '/api/campaigns',
       providesTags: ['Campaign'],
-      // Poll every 5 seconds for real-time updates
-      pollingInterval: 5000,
     }),
 
     getCampaignById: builder.query<Campaign, string>({
       query: (id) => `/api/campaigns/${id}`,
       providesTags: ['Campaign'],
-      // Poll every 5 seconds for real-time updates
-      pollingInterval: 5000,
     }),
 
     createCampaign: builder.mutation<Campaign, CreateCampaignRequest>({
@@ -80,8 +76,6 @@ export const api = createApi({
         params: { page, limit }
       }),
       providesTags: ['Recipient'],
-      // Poll every 5 seconds for real-time updates
-      pollingInterval: 5000,
     }),
 
     addRecipient: builder.mutation<EmailRecipient, { campaignId: string; data: AddRecipientRequest }>({

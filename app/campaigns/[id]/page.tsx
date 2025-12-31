@@ -17,13 +17,17 @@ export default function CampaignDetailPage() {
   const campaignId = params.id as string;
 
   const { data: user } = useGetUserProfileQuery();
-  const { data: campaign, isLoading: campaignLoading } = useGetCampaignByIdQuery(campaignId);
+  const { data: campaign, isLoading: campaignLoading } = useGetCampaignByIdQuery(campaignId, {
+    pollingInterval: 5000, // Poll every 5 seconds
+  });
 
   const [currentPage, setCurrentPage] = useState(1);
   const { data: recipientsData, isLoading: recipientsLoading, refetch } = useGetCampaignRecipientsQuery({
     campaignId,
     page: currentPage,
     limit: 10
+  }, {
+    pollingInterval: 5000, // Poll every 5 seconds
   });
 
   const [addRecipient, { isLoading: isAdding }] = useAddRecipientMutation();

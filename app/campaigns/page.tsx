@@ -8,7 +8,9 @@ import Navbar from '@/components/Navbar';
 export default function CampaignsPage() {
   const router = useRouter();
   const { data: user } = useGetUserProfileQuery();
-  const { data: campaigns = [], isLoading } = useGetCampaignsQuery();
+  const { data: campaigns = [], isLoading } = useGetCampaignsQuery(undefined, {
+    pollingInterval: 5000, // Poll every 5 seconds
+  });
   const [createCampaign, { isLoading: isCreating }] = useCreateCampaignMutation();
   const [deleteCampaign, { isLoading: isDeleting }] = useDeleteCampaignMutation();
 
