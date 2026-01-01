@@ -310,8 +310,8 @@ export default function RecipientsTable({
                             onClick={() => handleTriggerNow(recipient._id)}
                             disabled={isTriggering}
                             size="sm"
-                            variant="warning"
-                            className="gap-1"
+                            variant="outline"
+                            className="gap-1 border-orange-500 text-orange-600 hover:bg-orange-500/10"
                             title={recipient.error || 'Failed to send email'}
                           >
                             <RotateCcw className="h-3 w-3" />

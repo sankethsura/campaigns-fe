@@ -10,6 +10,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const { data: user, isLoading, error } = useGetUserProfileQuery();
 
+  console.log(process.env.NEXT_PUBLIC_API_URL,"process.env.NEXT_PUBLIC_API_URL")
   useEffect(() => {
     if (!isAuthenticated()) {
       router.push('/login');
