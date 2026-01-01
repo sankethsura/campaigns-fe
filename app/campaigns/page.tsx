@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useGetCampaignsQuery, useCreateCampaignMutation, useDeleteCampaignMutation, useGetUserProfileQuery } from '@/store/api';
+import { isAuthenticated } from '@/lib/auth';
 import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,6 +14,14 @@ import { Plus, X, Mail, Trash2, Eye, Calendar, Users, Send, AlertCircle, Loader2
 
 export default function CampaignsPage() {
   const router = useRouter();
+
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      router.push('/login');
+      return;
+    }
+  }, [router]);
+
   const { data: user } = useGetUserProfileQuery();
   const { data: campaigns = [], isLoading } = useGetCampaignsQuery(undefined, {
     pollingInterval: 5000, // Poll every 5 seconds

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import {
   useGetCampaignByIdQuery,
@@ -8,6 +8,7 @@ import {
   useAddRecipientMutation,
   useGetUserProfileQuery,
 } from '@/store/api';
+import { isAuthenticated } from '@/lib/auth';
 import RecipientsTable from '@/components/RecipientsTable';
 import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
@@ -33,6 +34,13 @@ export default function CampaignDetailPage() {
   const params = useParams();
   const router = useRouter();
   const campaignId = params.id as string;
+
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      router.push('/login');
+      return;
+    }
+  }, [router]);
 
   const { data: user } = useGetUserProfileQuery();
   const { data: campaign, isLoading: campaignLoading } = useGetCampaignByIdQuery(campaignId, {
