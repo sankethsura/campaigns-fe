@@ -57,6 +57,8 @@ export default function CampaignDetailPage() {
     triggerDate: '',
   });
 
+  console.log(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000',"env-backend")
+
   const handleAddRecipient = async (e: React.FormEvent) => {
     e.preventDefault();
 
