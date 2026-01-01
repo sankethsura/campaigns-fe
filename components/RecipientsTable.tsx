@@ -45,12 +45,31 @@ export default function RecipientsTable({
   const [deleteRecipient, { isLoading: isDeleting }] = useDeleteRecipientMutation();
   const [triggerEmailNow, { isLoading: isTriggering }] = useTriggerEmailNowMutation();
 
+  // Convert UTC date to local datetime-local format
+  const toLocalDateTimeString = (utcDateString: string): string => {
+    const date = new Date(utcDateString);
+    // Get local date components
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
+  // Convert local datetime-local string to UTC ISO string
+  const toUTCString = (localDateTimeString: string): string => {
+    const date = new Date(localDateTimeString);
+    return date.toISOString();
+  };
+
   const handleEdit = (recipient: EmailRecipient) => {
     setEditingId(recipient._id);
     setEditForm({
       email: recipient.email,
       message: recipient.message,
-      triggerDate: recipient.triggerDate.split('.')[0], // Remove milliseconds for datetime-local input
+      triggerDate: toLocalDateTimeString(recipient.triggerDate),
     });
   };
 
@@ -67,7 +86,7 @@ export default function RecipientsTable({
         data: {
           email: editForm.email,
           message: editForm.message,
-          triggerDate: editForm.triggerDate,
+          triggerDate: toUTCString(editForm.triggerDate!),
         },
       }).unwrap();
       setEditingId(null);

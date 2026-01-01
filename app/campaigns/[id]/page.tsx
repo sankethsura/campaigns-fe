@@ -67,6 +67,12 @@ export default function CampaignDetailPage() {
 
   console.log(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000',"env-backend")
 
+  // Convert local datetime-local string to UTC ISO string
+  const toUTCString = (localDateTimeString: string): string => {
+    const date = new Date(localDateTimeString);
+    return date.toISOString();
+  };
+
   const handleAddRecipient = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -81,7 +87,7 @@ export default function CampaignDetailPage() {
         data: {
           email: newRecipient.email,
           message: newRecipient.message,
-          triggerDate: newRecipient.triggerDate,
+          triggerDate: toUTCString(newRecipient.triggerDate),
         },
       }).unwrap();
 
