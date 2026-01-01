@@ -1,0 +1,40 @@
+import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
+import { cn } from "@/lib/utils"
+import { Loader2 } from "lucide-react"
+
+const spinnerVariants = cva(
+  "animate-spin text-primary",
+  {
+    variants: {
+      size: {
+        sm: "h-4 w-4",
+        default: "h-8 w-8",
+        lg: "h-12 w-12",
+        xl: "h-16 w-16",
+      },
+    },
+    defaultVariants: {
+      size: "default",
+    },
+  }
+)
+
+export interface SpinnerProps
+  extends React.HTMLAttributes<SVGElement>,
+    VariantProps<typeof spinnerVariants> {}
+
+const Spinner = React.forwardRef<SVGSVGElement, SpinnerProps>(
+  ({ className, size, ...props }, ref) => {
+    return (
+      <Loader2
+        ref={ref}
+        className={cn(spinnerVariants({ size, className }))}
+        {...props}
+      />
+    )
+  }
+)
+Spinner.displayName = "Spinner"
+
+export { Spinner, spinnerVariants }

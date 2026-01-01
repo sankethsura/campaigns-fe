@@ -7,7 +7,7 @@ import { useLogoutMutation } from '@/store/api';
 import { User } from '@/types/user';
 import { ThemeToggle } from './theme-toggle';
 import { Button } from './ui/button';
-import { LogOut, Mail } from 'lucide-react';
+import { LogOut, Mail, Home } from 'lucide-react';
 
 interface NavbarProps {
   user: User;
@@ -41,6 +41,16 @@ export default function Navbar({ user }: NavbarProps) {
           </Link>
 
           <div className="flex items-center space-x-4">
+            <Button
+              onClick={() => router.push('/')}
+              variant="outline"
+              size="sm"
+              className="gap-2"
+            >
+              <Home className="h-4 w-4" />
+              Home
+            </Button>
+
             <ThemeToggle />
 
             <div className="flex items-center space-x-3 px-4 py-2 rounded-lg bg-accent/50">
