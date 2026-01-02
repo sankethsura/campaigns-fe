@@ -201,9 +201,9 @@ export default function CampaignDetailPage() {
                     </CardDescription>
                   )}
                 </div>
-                <Badge variant={getStatusVariant(campaign.status)} className="text-xs sm:text-sm px-2 sm:px-3 py-1 self-start">
+                {/* <Badge variant={getStatusVariant(campaign.status)} className="text-xs sm:text-sm px-2 sm:px-3 py-1 self-start">
                   {campaign.status.replace('_', ' ').toUpperCase()}
-                </Badge>
+                </Badge> */}
               </div>
             </CardHeader>
 
