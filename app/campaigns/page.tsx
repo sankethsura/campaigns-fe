@@ -106,17 +106,17 @@ export default function CampaignsPage() {
       <Navbar user={user} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-orange-600 bg-clip-text text-transparent mb-2">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-8">
+          <div className="flex-1">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-orange-600 bg-clip-text text-transparent mb-2">
               Email Campaigns
             </h1>
-            <p className="text-muted-foreground">Manage and track your email campaigns</p>
+            <p className="text-sm sm:text-base text-muted-foreground">Manage and track your email campaigns</p>
           </div>
           <Button
             onClick={() => setShowCreateForm(!showCreateForm)}
             size="lg"
-            className="gap-2"
+            className="gap-2 w-full md:w-auto"
           >
             {showCreateForm ? (
               <>
@@ -135,18 +135,18 @@ export default function CampaignsPage() {
         {showCreateForm && (
           <Card className="mb-8 border-2 shadow-xl">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
                 <Mail className="h-5 w-5 text-primary" />
                 Create New Campaign
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs sm:text-sm">
                 Start a new email campaign to reach your audience
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleCreateCampaign} className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  <label className="text-sm font-medium leading-none">
                     Campaign Name <span className="text-destructive">*</span>
                   </label>
                   <Input
@@ -158,7 +158,7 @@ export default function CampaignsPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  <label className="text-sm font-medium leading-none">
                     Description <span className="text-muted-foreground text-xs">(optional)</span>
                   </label>
                   <Textarea
@@ -171,7 +171,7 @@ export default function CampaignsPage() {
                 <Button
                   type="submit"
                   disabled={isCreating}
-                  className="gap-2"
+                  className="gap-2 w-full sm:w-auto"
                 >
                   {isCreating ? (
                     <>
@@ -197,26 +197,27 @@ export default function CampaignsPage() {
           </div>
         ) : campaigns.length === 0 ? (
           <Card className="border-2 border-dashed shadow-xl">
-            <CardContent className="flex flex-col items-center justify-center py-16">
-              <div className="rounded-full bg-primary/10 p-4 mb-4">
-                <Mail className="h-12 w-12 text-primary" />
+            <CardContent className="flex flex-col items-center justify-center py-12 sm:py-16 px-4">
+              <div className="rounded-full bg-primary/10 p-3 sm:p-4 mb-4">
+                <Mail className="h-10 w-10 sm:h-12 sm:w-12 text-primary" />
               </div>
-              <CardTitle className="mb-2">No campaigns yet</CardTitle>
-              <CardDescription className="mb-6 text-center max-w-md">
+              <CardTitle className="mb-2 text-lg sm:text-xl">No campaigns yet</CardTitle>
+              <CardDescription className="mb-6 text-center max-w-md text-sm sm:text-base">
                 Get started by creating your first email campaign to engage with your audience
               </CardDescription>
               <Button
                 onClick={() => setShowCreateForm(true)}
                 size="lg"
-                className="gap-2"
+                className="gap-2 w-full sm:w-auto"
               >
                 <Plus className="h-5 w-5" />
-                Create Your First Campaign
+                <span className="hidden sm:inline">Create Your First Campaign</span>
+                <span className="sm:hidden">Create Campaign</span>
               </Button>
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {campaigns.map((campaign) => (
               <Card
                 key={campaign._id}
@@ -226,51 +227,51 @@ export default function CampaignsPage() {
                 <CardHeader>
                   <div className="flex justify-between items-start gap-2">
                     <div className="flex items-center gap-2 flex-1 min-w-0">
-                      <Mail className="h-5 w-5 text-primary flex-shrink-0" />
-                      <CardTitle className="line-clamp-1 group-hover:text-primary transition-colors">
+                      <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
+                      <CardTitle className="line-clamp-1 group-hover:text-primary transition-colors text-base sm:text-lg">
                         {campaign.name}
                       </CardTitle>
                     </div>
-                    <Badge variant={getStatusVariant(campaign.status)}>
+                    <Badge variant={getStatusVariant(campaign.status)} className="text-xs">
                       {campaign.status.replace('_', ' ')}
                     </Badge>
                   </div>
                   {campaign.description && (
-                    <CardDescription className="line-clamp-2 mt-2">
+                    <CardDescription className="line-clamp-2 mt-2 text-xs sm:text-sm">
                       {campaign.description}
                     </CardDescription>
                   )}
                 </CardHeader>
 
                 <CardContent className="space-y-3 pb-4">
-                  <div className="grid grid-cols-3 gap-2 text-center">
-                    <div className="p-3 rounded-lg bg-accent/50">
+                  <div className="grid grid-cols-3 gap-1.5 sm:gap-2 text-center">
+                    <div className="p-2 sm:p-3 rounded-lg bg-accent/50">
                       <div className="flex items-center justify-center gap-1 text-muted-foreground mb-1">
                         <Users className="h-3 w-3" />
                       </div>
-                      <div className="text-xl font-bold">{campaign.totalRecipients}</div>
-                      <div className="text-xs text-muted-foreground">Total</div>
+                      <div className="text-lg sm:text-xl font-bold">{campaign.totalRecipients}</div>
+                      <div className="text-[10px] sm:text-xs text-muted-foreground">Total</div>
                     </div>
-                    <div className="p-3 rounded-lg bg-green-500/10">
+                    <div className="p-2 sm:p-3 rounded-lg bg-green-500/10">
                       <div className="flex items-center justify-center gap-1 text-green-600 mb-1">
                         <Send className="h-3 w-3" />
                       </div>
-                      <div className="text-xl font-bold text-green-600">{campaign.sentCount}</div>
-                      <div className="text-xs text-muted-foreground">Sent</div>
+                      <div className="text-lg sm:text-xl font-bold text-green-600">{campaign.sentCount}</div>
+                      <div className="text-[10px] sm:text-xs text-muted-foreground">Sent</div>
                     </div>
-                    <div className="p-3 rounded-lg bg-destructive/10">
+                    <div className="p-2 sm:p-3 rounded-lg bg-destructive/10">
                       <div className="flex items-center justify-center gap-1 text-destructive mb-1">
                         <AlertCircle className="h-3 w-3" />
                       </div>
-                      <div className="text-xl font-bold text-destructive">{campaign.failedCount}</div>
-                      <div className="text-xs text-muted-foreground">Failed</div>
+                      <div className="text-lg sm:text-xl font-bold text-destructive">{campaign.failedCount}</div>
+                      <div className="text-[10px] sm:text-xs text-muted-foreground">Failed</div>
                     </div>
                   </div>
 
                   <div className="pt-2 border-t">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Calendar className="h-3 w-3" />
-                      Created {formatDate(campaign.createdAt)}
+                    <div className="flex items-center gap-2 text-[10px] sm:text-xs text-muted-foreground">
+                      <Calendar className="h-3 w-3 flex-shrink-0" />
+                      <span className="truncate">Created {formatDate(campaign.createdAt)}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -283,10 +284,11 @@ export default function CampaignsPage() {
                     }}
                     variant="default"
                     size="sm"
-                    className="gap-2 flex-1"
+                    className="gap-1 sm:gap-2 flex-1"
                   >
-                    <Eye className="h-4 w-4" />
-                    View Details
+                    <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
+                    <span className="hidden sm:inline">View Details</span>
+                    <span className="sm:hidden">View</span>
                   </Button>
                   <Button
                     onClick={(e) => {
@@ -296,12 +298,12 @@ export default function CampaignsPage() {
                     disabled={isDeleting}
                     variant="outline"
                     size="sm"
-                    className="gap-2 text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/20"
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/20"
                   >
                     {isDeleting ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
                     ) : (
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                     )}
                   </Button>
                 </CardFooter>
