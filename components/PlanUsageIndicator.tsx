@@ -1,10 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { getAuthToken } from '@/lib/auth';
 import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
-import { TrendingUp, Infinity } from 'lucide-react';
+import { Button } from './ui/button';
+import { TrendingUp, Infinity, Zap } from 'lucide-react';
 
 interface PlanUsage {
   planDisplayName: string;
@@ -16,6 +18,7 @@ interface PlanUsage {
 }
 
 export default function PlanUsageIndicator() {
+  const router = useRouter();
   const [usage, setUsage] = useState<PlanUsage | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -100,6 +103,17 @@ export default function PlanUsageIndicator() {
               )}
             </div>
           </div>
+          {!usage.isUnlimited && usage.percentageUsed >= 100 && (
+            <Button
+              onClick={() => router.push('/pricing')}
+              size="sm"
+              className="gap-2 bg-gradient-to-r from-primary to-orange-600 hover:opacity-90"
+            >
+              <Zap className="h-4 w-4" />
+              <span className="hidden sm:inline">Upgrade Plan</span>
+              <span className="sm:hidden">Upgrade</span>
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>
