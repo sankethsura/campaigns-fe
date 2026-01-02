@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { useGetCampaignsQuery, useCreateCampaignMutation, useDeleteCampaignMutation, useGetUserProfileQuery } from '@/store/api';
 import { isAuthenticated } from '@/lib/auth';
 import Navbar from '@/components/Navbar';
+import PlanUsageIndicator from '@/components/PlanUsageIndicator';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -130,6 +131,10 @@ export default function CampaignsPage() {
               </>
             )}
           </Button>
+        </div>
+
+        <div className="mb-8">
+          <PlanUsageIndicator />
         </div>
 
         {showCreateForm && (

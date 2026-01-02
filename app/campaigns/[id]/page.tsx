@@ -13,6 +13,7 @@ import {
 import { isAuthenticated } from '@/lib/auth';
 import RecipientsTable from '@/components/RecipientsTable';
 import Navbar from '@/components/Navbar';
+import UpgradeModal from '@/components/UpgradeModal';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -68,6 +69,11 @@ export default function CampaignDetailPage() {
     message: '',
     triggerDate: '',
   });
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [upgradeModalData, setUpgradeModalData] = useState<{
+    message?: string;
+    usageInfo?: { planLimit: number; currentCount: number; remaining?: number };
+  }>({});
 
   console.log(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000',"env-backend")
 
@@ -101,7 +107,21 @@ export default function CampaignDetailPage() {
       refetch();
     } catch (error: any) {
       console.error('Failed to add recipient:', error);
-      toast.error(error?.data?.message || 'Failed to add recipient');
+
+      // Check if it's a plan limit error (403)
+      if (error?.status === 403 && error?.data) {
+        setUpgradeModalData({
+          message: error.data.error,
+          usageInfo: {
+            planLimit: error.data.planLimit,
+            currentCount: error.data.currentCount,
+            remaining: error.data.planLimit - error.data.currentCount
+          }
+        });
+        setShowUpgradeModal(true);
+      } else {
+        toast.error(error?.data?.error || error?.data?.message || 'Failed to add recipient');
+      }
     }
   };
 
@@ -374,6 +394,15 @@ export default function CampaignDetailPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Upgrade Modal */}
+      <UpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        currentPlan={user?.currentPlan || 'free'}
+        usageInfo={upgradeModalData.usageInfo}
+        message={upgradeModalData.message}
+      />
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
+import PlanUsageIndicator from '@/components/PlanUsageIndicator';
 import { useGetUserProfileQuery } from '@/store/api';
 import { isAuthenticated } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
@@ -77,6 +78,10 @@ export default function DashboardPage() {
             </div>
           </CardContent>
         </Card>
+
+        <div className="mb-8">
+          <PlanUsageIndicator />
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="border-2 shadow-xl">
