@@ -182,7 +182,8 @@ export default function RecipientsTable({
 
   return (
     <div>
-      <div className="overflow-x-auto rounded-lg border">
+      {/* Desktop Table View */}
+      <div className="hidden lg:block overflow-x-auto rounded-lg border">
         <table className="min-w-full divide-y divide-border">
           <thead className="bg-accent/50">
             <tr>
@@ -360,6 +361,158 @@ export default function RecipientsTable({
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="lg:hidden space-y-4">
+        {recipients.map((recipient) => (
+          <div
+            key={recipient._id}
+            className="border-2 rounded-lg p-4 bg-background hover:bg-accent/30 transition-colors"
+          >
+            {editingId === recipient._id ? (
+              /* Edit Mode */
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-muted-foreground">Email</label>
+                  <Input
+                    type="email"
+                    value={editForm.email || ''}
+                    onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-muted-foreground">Message</label>
+                  <Textarea
+                    value={editForm.message || ''}
+                    onChange={(e) => setEditForm({ ...editForm, message: e.target.value })}
+                    rows={3}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-muted-foreground">Trigger Date</label>
+                  <Input
+                    type="datetime-local"
+                    value={editForm.triggerDate || ''}
+                    onChange={(e) => setEditForm({ ...editForm, triggerDate: e.target.value })}
+                  />
+                </div>
+                <div className="flex gap-2 pt-2">
+                  <Button
+                    onClick={() => handleSave(recipient._id)}
+                    disabled={isUpdating}
+                    size="sm"
+                    variant="default"
+                    className="gap-1 flex-1"
+                  >
+                    <Save className="h-3 w-3" />
+                    Save
+                  </Button>
+                  <Button
+                    onClick={handleCancel}
+                    disabled={isUpdating}
+                    size="sm"
+                    variant="outline"
+                    className="gap-1 flex-1"
+                  >
+                    <X className="h-3 w-3" />
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              /* View Mode */
+              <div className="space-y-3">
+                {/* Email and Status */}
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <Mail className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <span className="text-sm font-medium truncate">{recipient.email}</span>
+                  </div>
+                  {getStatusBadge(recipient.status)}
+                </div>
+
+                {/* Message */}
+                <div className="space-y-1">
+                  <label className="text-xs font-medium text-muted-foreground">Message</label>
+                  <p className="text-sm text-foreground line-clamp-2">{recipient.message}</p>
+                </div>
+
+                {/* Trigger Date */}
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Clock className="h-4 w-4" />
+                  <span>{formatDate(recipient.triggerDate)}</span>
+                </div>
+
+                {/* Actions */}
+                <div className="flex flex-wrap gap-2 pt-2 border-t">
+                  {recipient.status === 'pending' && (
+                    <>
+                      {isExpired(recipient.triggerDate) && (
+                        <Badge variant="warning" className="gap-1">
+                          <AlertTriangle className="h-3 w-3" />
+                          Expired
+                        </Badge>
+                      )}
+                      <Button
+                        onClick={() => handleTriggerNow(recipient._id)}
+                        disabled={isTriggering}
+                        size="sm"
+                        variant="default"
+                        className="gap-1 flex-1"
+                      >
+                        <Send className="h-3 w-3" />
+                        Trigger
+                      </Button>
+                      <Button
+                        onClick={() => handleEdit(recipient)}
+                        size="sm"
+                        variant="outline"
+                        className="gap-1"
+                      >
+                        <Edit className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        onClick={() => handleDelete(recipient._id)}
+                        disabled={isDeleting}
+                        size="sm"
+                        variant="ghost"
+                        className="gap-1 text-destructive hover:text-destructive hover:bg-destructive/10"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </>
+                  )}
+                  {recipient.status === 'failed' && (
+                    <Button
+                      onClick={() => handleTriggerNow(recipient._id)}
+                      disabled={isTriggering}
+                      size="sm"
+                      variant="outline"
+                      className="gap-1 border-orange-500 text-orange-600 hover:bg-orange-500/10 flex-1"
+                      title={recipient.error || 'Failed to send email'}
+                    >
+                      <RotateCcw className="h-3 w-3" />
+                      Retry
+                    </Button>
+                  )}
+                  {recipient.status === 'sent' && (
+                    <span className="text-xs text-muted-foreground flex items-center gap-1">
+                      <CheckCircle2 className="h-3 w-3 text-green-600" />
+                      Sent {recipient.sentAt && formatDate(recipient.sentAt)}
+                    </span>
+                  )}
+                  {recipient.status === 'processing' && (
+                    <span className="text-xs flex items-center gap-1">
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                      Sending...
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
       </div>
 
       {/* Pagination Controls */}

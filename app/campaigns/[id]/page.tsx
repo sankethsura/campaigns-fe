@@ -167,21 +167,21 @@ export default function CampaignDetailPage() {
 
           <Card className="border-2 shadow-xl">
             <CardHeader>
-              <div className="flex justify-between items-start gap-4">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
-                    <Mail className="h-6 w-6 text-primary" />
-                    <CardTitle className="text-3xl bg-gradient-to-r from-primary to-orange-600 bg-clip-text text-transparent">
+                    <Mail className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                    <CardTitle className="text-xl sm:text-2xl md:text-3xl bg-gradient-to-r from-primary to-orange-600 bg-clip-text text-transparent">
                       {campaign.name}
                     </CardTitle>
                   </div>
                   {campaign.description && (
-                    <CardDescription className="text-base mt-2">
+                    <CardDescription className="text-sm sm:text-base mt-2">
                       {campaign.description}
                     </CardDescription>
                   )}
                 </div>
-                <Badge variant={getStatusVariant(campaign.status)} className="text-sm px-3 py-1">
+                <Badge variant={getStatusVariant(campaign.status)} className="text-xs sm:text-sm px-2 sm:px-3 py-1 self-start">
                   {campaign.status.replace('_', ' ').toUpperCase()}
                 </Badge>
               </div>
@@ -249,55 +249,52 @@ export default function CampaignDetailPage() {
           </Card>
         </div>
 
-        <Card className="border-2 shadow-xl mb-6">
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-2">
-                <FileSpreadsheet className="h-5 w-5 text-primary" />
-                <CardTitle>Import Recipients from Excel</CardTitle>
+        <Card className="border border-dashed shadow-sm mb-6 bg-accent/20">
+          <CardContent className="py-4">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <FileSpreadsheet className="h-4 w-4 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Excel Import</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Bulk import feature coming soon
+                  </p>
+                </div>
               </div>
-              <Badge variant="warning">Coming Soon</Badge>
-            </div>
-            <CardDescription className="mt-2">
-              Bulk import recipients from Excel files with columns:{' '}
-              <code className="px-1.5 py-0.5 bg-accent rounded text-xs font-mono">email</code>,{' '}
-              <code className="px-1.5 py-0.5 bg-accent rounded text-xs font-mono">triggerDate</code>{' '}
-              (YYYY-MM-DD HH:MM),{' '}
-              <code className="px-1.5 py-0.5 bg-accent rounded text-xs font-mono">message</code>
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="border-2 border-dashed rounded-lg p-12 text-center bg-accent/30">
-              <FileSpreadsheet className="mx-auto h-16 w-16 text-muted-foreground mb-4 opacity-50" />
-              <p className="font-medium text-muted-foreground mb-1">Excel Import Feature</p>
-              <p className="text-sm text-muted-foreground/70">This feature will be available soon</p>
+              <Badge variant="secondary" className="text-xs px-2 py-0.5 bg-muted/50">
+                Coming Soon
+              </Badge>
             </div>
           </CardContent>
         </Card>
 
         <Card className="border-2 shadow-xl mb-6">
           <CardHeader>
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
               <div className="flex items-center gap-2">
-                <Users className="h-5 w-5 text-primary" />
-                <CardTitle>
+                <Users className="h-5 w-5 text-primary flex-shrink-0" />
+                <CardTitle className="text-base sm:text-lg">
                   Recipients ({recipientsData?.pagination.totalRecipients || 0})
                 </CardTitle>
               </div>
               <Button
                 onClick={() => setShowAddForm(!showAddForm)}
                 variant={showAddForm ? "outline" : "default"}
-                className="gap-2"
+                size="sm"
+                className="gap-2 self-start sm:self-center"
               >
                 {showAddForm ? (
                   <>
                     <X className="h-4 w-4" />
-                    Cancel
+                    <span className="hidden sm:inline">Cancel</span>
                   </>
                 ) : (
                   <>
                     <UserPlus className="h-4 w-4" />
-                    Add Recipient
+                    <span className="hidden sm:inline">Add Recipient</span>
+                    <span className="sm:hidden">Add</span>
                   </>
                 )}
               </Button>
