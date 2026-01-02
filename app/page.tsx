@@ -99,7 +99,7 @@ export default function Home() {
             <div className="flex flex-wrap justify-center gap-8 pt-8 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-green-600" />
-                <span>20 free emails to start</span>
+                <span>5 free emails to start</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-green-600" />
@@ -414,7 +414,7 @@ export default function Home() {
               Join thousands of users who trust our platform to deliver their emails at exactly the right moment.
             </p>
             <p className="text-lg text-green-600 font-semibold mb-8">
-              Start with 20 free emails - No credit card required
+              Start with 5 free emails - No credit card required
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button

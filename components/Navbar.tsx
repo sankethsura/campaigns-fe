@@ -7,7 +7,7 @@ import { useLogoutMutation } from '@/store/api';
 import { User } from '@/types/user';
 import { ThemeToggle } from './theme-toggle';
 import { Button } from './ui/button';
-import { LogOut, Mail, Home } from 'lucide-react';
+import { LogOut, Mail, Home, CreditCard } from 'lucide-react';
 
 interface NavbarProps {
   user: User;
@@ -49,6 +49,16 @@ export default function Navbar({ user }: NavbarProps) {
             >
               <Home className="h-4 w-4" />
               Home
+            </Button>
+
+            <Button
+              onClick={() => router.push('/pricing')}
+              variant="outline"
+              size="sm"
+              className="gap-2"
+            >
+              <CreditCard className="h-4 w-4" />
+              Pricing
             </Button>
 
             <ThemeToggle />
