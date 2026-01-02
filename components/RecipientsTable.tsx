@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { EmailRecipient, PaginationMetadata } from '@/types/campaign';
 import { useUpdateRecipientMutation, useDeleteRecipientMutation, useTriggerEmailNowMutation } from '@/store/api';
 import { Button } from './ui/button';
@@ -91,9 +92,10 @@ export default function RecipientsTable({
       }).unwrap();
       setEditingId(null);
       setEditForm({});
+      toast.success('Recipient updated successfully');
     } catch (error) {
       console.error('Failed to update recipient:', error);
-      alert('Failed to update recipient');
+      toast.error('Failed to update recipient');
     }
   };
 
@@ -104,9 +106,10 @@ export default function RecipientsTable({
 
     try {
       await deleteRecipient({ campaignId, recipientId }).unwrap();
+      toast.success('Recipient deleted successfully');
     } catch (error) {
       console.error('Failed to delete recipient:', error);
-      alert('Failed to delete recipient');
+      toast.error('Failed to delete recipient');
     }
   };
 
@@ -118,13 +121,13 @@ export default function RecipientsTable({
     try {
       const result = await triggerEmailNow({ campaignId, recipientId }).unwrap();
       if (result.success) {
-        alert('Email sent successfully!');
+        toast.success('Email sent successfully!');
       } else {
-        alert(`Failed to send email: ${result.error || 'Unknown error'}`);
+        toast.error(`Failed to send email: ${result.error || 'Unknown error'}`);
       }
     } catch (error: any) {
       console.error('Failed to trigger email:', error);
-      alert(error?.data?.error || 'Failed to trigger email');
+      toast.error(error?.data?.error || 'Failed to trigger email');
     }
   };
 

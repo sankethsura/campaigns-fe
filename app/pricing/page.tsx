@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { isAuthenticated, getAuthToken } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -108,7 +109,7 @@ export default function PricingPage() {
 
       if (response.ok) {
         setCouponDiscount(data.discountPercentage);
-        alert('✅ ' + data.message);
+        toast.success(data.message);
       } else {
         setCouponError(data.error || 'Invalid coupon code');
         setCouponDiscount(0);
@@ -154,10 +155,10 @@ export default function PricingPage() {
         const data = await response.json();
 
         if (response.ok) {
-          alert('✅ ' + data.message);
+          toast.success(data.message);
           router.push('/dashboard');
         } else {
-          alert('⚠️ ' + (data.error || 'Failed to activate free plan'));
+          toast.error(data.error || 'Failed to activate free plan');
         }
         setSubscribing(null);
         return;
@@ -186,7 +187,9 @@ export default function PricingPage() {
       if (!orderResponse.ok) {
         console.error('❌ Order creation failed:', orderData);
         const errorMsg = orderData.details || orderData.error || 'Failed to create payment order';
-        alert('⚠️ ' + errorMsg + '\n\nCheck console and backend logs for details.');
+        toast.error(errorMsg, {
+          description: 'Check console and backend logs for details.'
+        });
         setSubscribing(null);
         return;
       }
@@ -235,14 +238,16 @@ export default function PricingPage() {
             const verifyData = await verifyResponse.json();
 
             if (verifyResponse.ok) {
-              alert('✅ ' + verifyData.message);
+              toast.success(verifyData.message);
               router.push('/dashboard');
             } else {
-              alert('⚠️ Payment verification failed: ' + (verifyData.error || 'Unknown error'));
+              toast.error('Payment verification failed', {
+                description: verifyData.error || 'Unknown error'
+              });
             }
           } catch (error) {
             console.error('Payment verification error:', error);
-            alert('❌ Failed to verify payment. Please contact support.');
+            toast.error('Failed to verify payment. Please contact support.');
           } finally {
             setSubscribing(null);
           }
@@ -262,7 +267,7 @@ export default function PricingPage() {
       console.log('Razorpay checkout opened');
     } catch (error) {
       console.error('Failed to subscribe:', error);
-      alert('❌ Failed to process subscription. Please try again.');
+      toast.error('Failed to process subscription. Please try again.');
       setSubscribing(null);
     } finally {
       // Note: Don't reset subscribing here as Razorpay modal handles it in ondismiss
@@ -500,53 +505,24 @@ export default function PricingPage() {
           })}
         </div>
 
-        {/* FAQ Section */}
-        <div className="mt-20 max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-8">Frequently Asked Questions</h2>
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">How does the free trial work?</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Start with 5 free emails per month. No credit card required. Test all features before upgrading.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Can I upgrade or downgrade anytime?</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Yes! Contact us to change your plan. We&apos;ll adjust your billing accordingly.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">What happens after I submit a subscription request?</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  We&apos;ll receive your request and contact you within 24 hours to complete the setup and payment process.
-                </p>
-              </CardContent>
-            </Card>
+        {/* CTA - Show different message based on plan */}
+        {currentPlan === 'free' ? (
+          <div className="mt-20 text-center">
+            <p className="text-muted-foreground mb-4">Not sure which plan is right for you?</p>
+            <Button onClick={() => router.push('/login')} variant="outline" size="lg" className="gap-2">
+              Start with Free Trial
+              <ArrowRight className="h-4 w-4" />
+            </Button>
           </div>
-        </div>
-
-        {/* CTA */}
-        <div className="mt-20 text-center">
-          <p className="text-muted-foreground mb-4">Not sure which plan is right for you?</p>
-          <Button onClick={() => router.push('/login')} variant="outline" size="lg" className="gap-2">
-            Start with Free Trial
-            <ArrowRight className="h-4 w-4" />
-          </Button>
-        </div>
+        ) : (
+          <div className="mt-20 text-center">
+            <p className="text-muted-foreground mb-4">Ready to send your campaigns?</p>
+            <Button onClick={() => router.push('/dashboard')} variant="default" size="lg" className="gap-2">
+              Go to Dashboard
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
       </section>
     </div>
   );

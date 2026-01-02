@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { useGetCampaignsQuery, useCreateCampaignMutation, useDeleteCampaignMutation, useGetUserProfileQuery } from '@/store/api';
 import { isAuthenticated } from '@/lib/auth';
 import Navbar from '@/components/Navbar';
@@ -39,7 +40,7 @@ export default function CampaignsPage() {
     e.preventDefault();
 
     if (!newCampaign.name.trim()) {
-      alert('Campaign name is required');
+      toast.error('Campaign name is required');
       return;
     }
 
@@ -55,7 +56,7 @@ export default function CampaignsPage() {
       router.push(`/campaigns/${campaign._id}`);
     } catch (error: any) {
       console.error('Failed to create campaign:', error);
-      alert(error?.data?.message || 'Failed to create campaign');
+      toast.error(error?.data?.message || 'Failed to create campaign');
     }
   };
 
@@ -66,9 +67,10 @@ export default function CampaignsPage() {
 
     try {
       await deleteCampaign(campaignId).unwrap();
+      toast.success('Campaign deleted successfully');
     } catch (error: any) {
       console.error('Failed to delete campaign:', error);
-      alert(error?.data?.message || 'Failed to delete campaign');
+      toast.error(error?.data?.message || 'Failed to delete campaign');
     }
   };
 
@@ -240,44 +242,46 @@ export default function CampaignsPage() {
                   )}
                 </CardHeader>
 
-                <CardContent className="space-y-3">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2 text-muted-foreground">
-                      <Users className="h-4 w-4" />
-                      Total Recipients
-                    </span>
-                    <span className="font-semibold">{campaign.totalRecipients}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2 text-muted-foreground">
-                      <Send className="h-4 w-4" />
-                      Sent
-                    </span>
-                    <span className="font-semibold text-green-600">{campaign.sentCount}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2 text-muted-foreground">
-                      <AlertCircle className="h-4 w-4" />
-                      Failed
-                    </span>
-                    <span className="font-semibold text-destructive">{campaign.failedCount}</span>
+                <CardContent className="space-y-3 pb-4">
+                  <div className="grid grid-cols-3 gap-2 text-center">
+                    <div className="p-3 rounded-lg bg-accent/50">
+                      <div className="flex items-center justify-center gap-1 text-muted-foreground mb-1">
+                        <Users className="h-3 w-3" />
+                      </div>
+                      <div className="text-xl font-bold">{campaign.totalRecipients}</div>
+                      <div className="text-xs text-muted-foreground">Total</div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10">
+                      <div className="flex items-center justify-center gap-1 text-green-600 mb-1">
+                        <Send className="h-3 w-3" />
+                      </div>
+                      <div className="text-xl font-bold text-green-600">{campaign.sentCount}</div>
+                      <div className="text-xs text-muted-foreground">Sent</div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-destructive/10">
+                      <div className="flex items-center justify-center gap-1 text-destructive mb-1">
+                        <AlertCircle className="h-3 w-3" />
+                      </div>
+                      <div className="text-xl font-bold text-destructive">{campaign.failedCount}</div>
+                      <div className="text-xs text-muted-foreground">Failed</div>
+                    </div>
                   </div>
 
                   <div className="pt-2 border-t">
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <Calendar className="h-3 w-3" />
-                      Created: {formatDate(campaign.createdAt)}
+                      Created {formatDate(campaign.createdAt)}
                     </div>
                   </div>
                 </CardContent>
 
-                <CardFooter className="bg-accent/50 flex justify-between gap-2">
+                <CardFooter className="pt-4 pb-4 flex gap-2">
                   <Button
                     onClick={(e) => {
                       e.stopPropagation();
                       router.push(`/campaigns/${campaign._id}`);
                     }}
-                    variant="ghost"
+                    variant="default"
                     size="sm"
                     className="gap-2 flex-1"
                   >
@@ -290,12 +294,15 @@ export default function CampaignsPage() {
                       handleDeleteCampaign(campaign._id, campaign.name);
                     }}
                     disabled={isDeleting}
-                    variant="ghost"
+                    variant="outline"
                     size="sm"
-                    className="gap-2 text-destructive hover:text-destructive hover:bg-destructive/10"
+                    className="gap-2 text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/20"
                   >
-                    <Trash2 className="h-4 w-4" />
-                    Delete
+                    {isDeleting ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Trash2 className="h-4 w-4" />
+                    )}
                   </Button>
                 </CardFooter>
               </Card>

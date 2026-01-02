@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import {
   useGetCampaignByIdQuery,
   useGetCampaignRecipientsQuery,
@@ -80,7 +81,7 @@ export default function CampaignDetailPage() {
     e.preventDefault();
 
     if (!newRecipient.email || !newRecipient.message || !newRecipient.triggerDate) {
-      alert('Please fill in all fields');
+      toast.error('Please fill in all fields');
       return;
     }
 
@@ -96,20 +97,21 @@ export default function CampaignDetailPage() {
 
       setNewRecipient({ email: '', message: '', triggerDate: '' });
       setShowAddForm(false);
+      toast.success('Recipient added successfully');
       refetch();
     } catch (error: any) {
       console.error('Failed to add recipient:', error);
-      alert(error?.data?.message || 'Failed to add recipient');
+      toast.error(error?.data?.message || 'Failed to add recipient');
     }
   };
 
   const handleRecalculateCounts = async () => {
     try {
       await recalculateCounts(campaignId).unwrap();
-      alert('Campaign counts recalculated successfully!');
+      toast.success('Campaign counts recalculated successfully!');
     } catch (error: any) {
       console.error('Failed to recalculate counts:', error);
-      alert(error?.data?.message || 'Failed to recalculate counts');
+      toast.error(error?.data?.message || 'Failed to recalculate counts');
     }
   };
 
