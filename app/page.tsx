@@ -34,6 +34,26 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-orange-500/10">
+      {/* Navigation */}
+      <nav className="absolute top-0 left-0 right-0 z-50 py-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <Mail className="h-6 w-6 text-primary" />
+            <span className="text-xl font-bold bg-gradient-to-r from-primary to-orange-600 bg-clip-text text-transparent">
+              Campaign Manager Pro
+            </span>
+          </div>
+          <div className="flex items-center gap-4">
+            <Button onClick={() => router.push('/pricing')} variant="ghost" className="gap-2">
+              Pricing
+            </Button>
+            <Button onClick={() => router.push('/login')} variant="outline" className="gap-2">
+              Sign In
+            </Button>
+          </div>
+        </div>
+      </nav>
+
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-grid-primary/[0.02] bg-[size:50px_50px]" />
@@ -58,36 +78,36 @@ export default function Home() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
               <Button
-                onClick={() => router.push('/login')}
+                onClick={() => router.push('/pricing')}
                 size="lg"
                 className="gap-2 text-lg px-8 py-6 shadow-lg shadow-primary/50 hover:shadow-xl hover:shadow-primary/60 transition-all"
               >
-                Start Scheduling Free
+                Start Free Trial
                 <ArrowRight className="h-5 w-5" />
               </Button>
               <Button
-                onClick={() => router.push('/login')}
+                onClick={() => router.push('/pricing')}
                 size="lg"
                 variant="outline"
                 className="gap-2 text-lg px-8 py-6"
               >
-                <Mail className="h-5 w-5" />
-                View Demo
+                <Sparkles className="h-5 w-5" />
+                View Pricing
               </Button>
             </div>
 
             <div className="flex flex-wrap justify-center gap-8 pt-8 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-green-600" />
+                <span>20 free emails to start</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-green-600" />
                 <span>No credit card required</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-green-600" />
-                <span>Unlimited campaigns</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-green-600" />
-                <span>Real-time tracking</span>
+                <span>Upgrade anytime</span>
               </div>
             </div>
           </div>
@@ -390,25 +410,28 @@ export default function Home() {
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               Ready to Schedule Smarter?
             </h2>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground mb-2 max-w-2xl mx-auto">
               Join thousands of users who trust our platform to deliver their emails at exactly the right moment.
+            </p>
+            <p className="text-lg text-green-600 font-semibold mb-8">
+              Start with 20 free emails - No credit card required
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
-                onClick={() => router.push('/login')}
+                onClick={() => router.push('/pricing')}
                 size="lg"
                 className="gap-2 text-lg px-8 py-6 shadow-lg shadow-primary/50"
               >
-                Start Free Today
+                Start Free Trial
                 <ArrowRight className="h-5 w-5" />
               </Button>
               <Button
-                onClick={() => router.push('/login')}
+                onClick={() => router.push('/pricing')}
                 size="lg"
                 variant="outline"
                 className="gap-2 text-lg px-8 py-6"
               >
-                Sign In
+                View Pricing
               </Button>
             </div>
           </CardContent>
