@@ -318,7 +318,7 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-semibold mb-2">Instant Send</h3>
               <p className="text-muted-foreground">
-                Trigger emails immediately with the "Send Now" feature for urgent communications.
+                Trigger emails immediately with the &quot;Send Now&quot; feature for urgent communications.
               </p>
             </CardContent>
           </Card>
