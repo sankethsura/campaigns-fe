@@ -7,6 +7,7 @@ import {
   useGetCampaignRecipientsQuery,
   useAddRecipientMutation,
   useGetUserProfileQuery,
+  useRecalculateCampaignCountsMutation,
 } from '@/store/api';
 import { isAuthenticated } from '@/lib/auth';
 import RecipientsTable from '@/components/RecipientsTable';
@@ -27,7 +28,8 @@ import {
   Calendar,
   FileSpreadsheet,
   Loader2,
-  UserPlus
+  UserPlus,
+  RefreshCw
 } from 'lucide-react';
 
 export default function CampaignDetailPage() {
@@ -57,6 +59,7 @@ export default function CampaignDetailPage() {
   });
 
   const [addRecipient, { isLoading: isAdding }] = useAddRecipientMutation();
+  const [recalculateCounts, { isLoading: isRecalculating }] = useRecalculateCampaignCountsMutation();
 
   const [showAddForm, setShowAddForm] = useState(false);
   const [newRecipient, setNewRecipient] = useState({
@@ -97,6 +100,16 @@ export default function CampaignDetailPage() {
     } catch (error: any) {
       console.error('Failed to add recipient:', error);
       alert(error?.data?.message || 'Failed to add recipient');
+    }
+  };
+
+  const handleRecalculateCounts = async () => {
+    try {
+      await recalculateCounts(campaignId).unwrap();
+      alert('Campaign counts recalculated successfully!');
+    } catch (error: any) {
+      console.error('Failed to recalculate counts:', error);
+      alert(error?.data?.message || 'Failed to recalculate counts');
     }
   };
 
@@ -207,6 +220,28 @@ export default function CampaignDetailPage() {
                     </div>
                   </CardContent>
                 </Card>
+              </div>
+
+              <div className="mt-4 flex justify-end">
+                <Button
+                  onClick={handleRecalculateCounts}
+                  disabled={isRecalculating}
+                  variant="outline"
+                  size="sm"
+                  className="gap-2"
+                >
+                  {isRecalculating ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Recalculating...
+                    </>
+                  ) : (
+                    <>
+                      <RefreshCw className="h-4 w-4" />
+                      Refresh Counts
+                    </>
+                  )}
+                </Button>
               </div>
             </CardContent>
           </Card>

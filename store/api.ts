@@ -119,6 +119,14 @@ export const api = createApi({
       }),
       invalidatesTags: ['Recipient', 'Campaign'],
     }),
+
+    recalculateCampaignCounts: builder.mutation<{ message: string; campaign: Campaign }, string>({
+      query: (campaignId) => ({
+        url: `/api/campaigns/${campaignId}/recalculate`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Campaign'],
+    }),
   }),
 });
 
@@ -135,4 +143,5 @@ export const {
   useDeleteRecipientMutation,
   useDeleteCampaignMutation,
   useTriggerEmailNowMutation,
+  useRecalculateCampaignCountsMutation,
 } = api;
