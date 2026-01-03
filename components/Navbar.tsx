@@ -8,7 +8,7 @@ import { useLogoutMutation } from '@/store/api';
 import { User } from '@/types/user';
 import { ThemeToggle } from './theme-toggle';
 import { Button } from './ui/button';
-import { LogOut, Mail, Home, CreditCard, Menu, X } from 'lucide-react';
+import { LogOut, Mail, CreditCard, Menu, X } from 'lucide-react';
 
 interface NavbarProps {
   user: User;
@@ -46,16 +46,6 @@ export default function Navbar({ user }: NavbarProps) {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button
-              onClick={() => router.push('/')}
-              variant="outline"
-              size="sm"
-              className="gap-2"
-            >
-              <Home className="h-4 w-4" />
-              Home
-            </Button>
-
             <Button
               onClick={() => router.push('/pricing')}
               variant="outline"
@@ -121,19 +111,6 @@ export default function Navbar({ user }: NavbarProps) {
             </div>
 
             {/* Navigation Buttons */}
-            <Button
-              onClick={() => {
-                router.push('/');
-                setMobileMenuOpen(false);
-              }}
-              variant="outline"
-              size="sm"
-              className="w-full gap-2 justify-start"
-            >
-              <Home className="h-4 w-4" />
-              Home
-            </Button>
-
             <Button
               onClick={() => {
                 router.push('/pricing');
